@@ -2,6 +2,7 @@ package org.nunnerycode.mint;
 
 import static org.nunnerycode.mint.MintPlugin.INT_FORMAT;
 
+import com.tealcube.minecraft.bukkit.facecore.utilities.FaceColor;
 import com.tealcube.minecraft.bukkit.shade.apache.commons.lang3.StringUtils;
 import info.faceland.mint.util.MintUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -41,15 +42,6 @@ public class MintPlaceholders extends PlaceholderExpansion {
     }
     if (placeholder.startsWith("bank_balance")) {
       return INT_FORMAT.format(MintPlugin.getInstance().getManager().getBankBalance(p.getUniqueId()));
-    }
-    if (placeholder.startsWith("full_econ_format")) {
-      double balance = MintPlugin.getInstance().getEconomy().getBalance(p);
-      double protect = MintUtil.getProtectedCash(p);
-      if (balance <= protect) {
-        return ChatColor.YELLOW + "" + ChatColor.BOLD + INT_FORMAT.format(balance) + " Bits";
-      }
-      return ChatColor.GREEN + "" + ChatColor.BOLD + INT_FORMAT.format(protect) + ChatColor.YELLOW
-          + "" + ChatColor.BOLD + "+" + INT_FORMAT.format(balance - protect) + " Bits";
     }
     return null;
   }

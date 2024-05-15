@@ -34,6 +34,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.ServicePriority;
@@ -45,6 +46,7 @@ import org.nunnerycode.mint.storage.YamlDataStorage;
 public class MintPlugin extends FacePlugin {
 
   private static MintPlugin _INSTANCE;
+  public static NamespacedKey moneyKey;
 
   private MasterConfiguration settings;
   private MintEconomy economy;
@@ -66,6 +68,7 @@ public class MintPlugin extends FacePlugin {
   public void enable() {
 
     _INSTANCE = this;
+    moneyKey = new NamespacedKey(this, "bullion.moneydrop");
 
     VersionedSmartYamlConfiguration configYAML =
         new VersionedSmartYamlConfiguration(new File(getDataFolder(), "config.yml"),

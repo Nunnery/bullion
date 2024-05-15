@@ -28,7 +28,7 @@
   <parent>
     <groupId>io.pixeloutlaw</groupId>
     <artifactId>generic-plugin-parent</artifactId>
-    <version>1.19.0.0</version>
+    <version>1.19.4.1</version>
   </parent>
 
   <artifactId>bullion</artifactId>
@@ -62,7 +62,7 @@
     <dependency>
       <groupId>io.pixeloutlaw</groupId>
       <artifactId>facecore</artifactId>
-      <version>1.19.0.1</version>
+      <version>1.20.4</version>
     </dependency>
     <dependency>
       <groupId>me.clip</groupId>

@@ -18,19 +18,25 @@
  */
 package info.faceland.mint.listeners;
 
+import com.tealcube.minecraft.bukkit.facecore.FacecorePlugin;
+import com.tealcube.minecraft.bukkit.facecore.utilities.ChunkUtil;
 import com.tealcube.minecraft.bukkit.facecore.utilities.MessageUtils;
 import com.tealcube.minecraft.bukkit.shade.apache.commons.lang3.StringUtils;
+import info.faceland.mint.tasks.PickupTask;
 import info.faceland.mint.util.MintUtil;
 import io.pixeloutlaw.minecraft.spigot.hilt.ItemStackExtensionsKt;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.nunnerycode.mint.MintPlugin;
 
@@ -90,5 +96,14 @@ public class MintListener implements Listener {
           new String[][]{{"%amount%", "" + amountSold}, {"%currency%", plugin.getEconomy().format(value)}});
     }
     plugin.getManager().removePlayerFromPawnMap((Player) event.getPlayer());
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onChunkLoad(final EntitiesLoadEvent event) {
+    for (Entity e : event.getEntities()) {
+      if (e.getPersistentDataContainer().has(MintPlugin.moneyKey)) {
+        new PickupTask((Item) e);
+      }
+    }
   }
 }

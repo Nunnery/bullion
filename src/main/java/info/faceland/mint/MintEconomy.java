@@ -23,6 +23,7 @@ import io.pixeloutlaw.minecraft.spigot.garbage.StringExtensionsKt;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.nunnerycode.mint.MintPlugin;
 
@@ -40,9 +41,9 @@ public class MintEconomy implements Economy {
   public MintEconomy(MintPlugin plugin) {
     this.plugin = plugin;
     currencyPlural = StringExtensionsKt.chatColorize(
-        plugin.getSettings().getString("config.currency-plural", "Bits"));
+        plugin.getSettings().getString("config.currency-plural", ChatColor.YELLOW + "◎"));
     currencySingular = StringExtensionsKt.chatColorize(
-        plugin.getSettings().getString("config.currency-singular", "Bit"));
+        plugin.getSettings().getString("config.currency-singular", ChatColor.YELLOW + "◎"));
   }
 
   @Override

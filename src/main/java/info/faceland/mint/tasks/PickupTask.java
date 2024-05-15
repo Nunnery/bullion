@@ -33,7 +33,7 @@ public class PickupTask extends BukkitRunnable {
     List<Player> players = new ArrayList<>(sourceItem.getWorld()
         .getNearbyPlayers(sourceItem.getLocation(), 1.5));
 
-    if (players.size() == 0) {
+    if (players.isEmpty()) {
       return;
     }
 

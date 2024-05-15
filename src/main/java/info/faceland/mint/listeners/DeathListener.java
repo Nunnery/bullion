@@ -24,7 +24,10 @@ import com.tealcube.minecraft.bukkit.facecore.utilities.FireworkUtil;
 import com.tealcube.minecraft.bukkit.facecore.utilities.PaletteUtil;
 import com.tealcube.minecraft.bukkit.shade.apache.commons.lang3.StringUtils;
 import info.faceland.mint.util.MintUtil;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,11 +36,13 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.nunnerycode.mint.MintPlugin;
 
@@ -47,6 +52,8 @@ public class DeathListener implements Listener {
   private final List<String> noLossWorlds;
   private final double doubleDropChance;
   private final String bitBombBroadcast;
+
+  private final Map<Player, Double> bitsDropped = new WeakHashMap<>();
 
   public DeathListener(MintPlugin plugin) {
     this.plugin = plugin;
@@ -156,10 +163,23 @@ public class DeathListener implements Listener {
       plugin.getEconomy().setBalance(event.getEntity(), (int) e.getAmountProtected());
       Item item = MintUtil.spawnCashDrop(event.getEntity().getLocation(), dropAmount, 0);
       MintUtil.applyDropProtection(item, event.getEntity().getUniqueId(), 2400);
-      PaletteUtil.sendMessage(event.getEntity(),
-          "|yellow||i|You dropped some Bits! You can pick them back up again, if you get there quickly enough! :O");
-      PaletteUtil.sendMessage(event.getEntity(), "|red|  -" + INT_FORMAT.format(dropAmount) + " Bits!");
+      bitsDropped.put(event.getPlayer(), dropAmount);
     }
+  }
+
+  @EventHandler(priority = EventPriority.HIGH)
+  public void onRespawn(final PlayerRespawnEvent event) {
+    if (!bitsDropped.containsKey(event.getPlayer())) {
+      return;
+    }
+    double value = bitsDropped.remove(event.getPlayer());
+    if (value > 0) {
+      PaletteUtil.sendMessage(event.getPlayer(), "|crimson| Bits Dropped: |yellow|" + INT_FORMAT.format(value) + "◎");
+    }
+    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+      PaletteUtil.sendMessage(event.getPlayer(),
+          "|yellow||i|You dropped some Bits! You can pick them back up again, if you get there quickly enough! :O");
+    }, 52L);
   }
 
   private boolean validBitDropConditions(EntityDeathEvent event) {

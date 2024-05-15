@@ -16,6 +16,7 @@
  */
 package info.faceland.mint.util;
 
+import com.tealcube.minecraft.bukkit.facecore.FacecorePlugin;
 import com.tealcube.minecraft.bukkit.facecore.utilities.FaceColor;
 import com.tealcube.minecraft.bukkit.shade.apache.commons.lang3.StringUtils;
 import com.tealcube.minecraft.bukkit.shade.apache.commons.lang3.math.NumberUtils;
@@ -38,6 +39,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.nunnerycode.mint.MintPlugin;
 
@@ -91,22 +93,23 @@ public class MintUtil {
     return true;
   }
 
+  public static Item spawnCashDrop(Location location, double amount) {
+    return spawnCashDrop(location, amount, 0);
+  }
+
   public static Item spawnCashDrop(Location location, double amount, float velocity) {
+    velocity = Math.max(0.2f, velocity);
     ItemStack item = new ItemStack(Material.GOLD_NUGGET);
     ItemStackExtensionsKt.setDisplayName(item, CASH_STRING);
     item.setLore(Collections.singletonList(Double.toString(amount)));
-    Item droppedItem;
-    if (velocity > 0) {
-      droppedItem = location.getWorld().dropItem(location, item);
-      droppedItem.setVelocity(new Vector(
-          Math.random() * velocity * (Math.random() > 0.5 ? 1 : -1),
-          0.1 + Math.random() * velocity,
-          Math.random() * velocity * (Math.random() > 0.5 ? 1 : -1))
-      );
-    } else {
-      droppedItem = location.getWorld().dropItemNaturally(location, item);
-    }
+    Item droppedItem = location.getWorld().spawn(location, Item.class, d -> d.setItemStack(item));
+    droppedItem.setVelocity(new Vector(
+        Math.random() * velocity * (Math.random() > 0.5 ? 1 : -1),
+        0.1 + Math.random() * velocity,
+        Math.random() * velocity * (Math.random() > 0.5 ? 1 : -1))
+    );
     applyNameplate(droppedItem, amount);
+    droppedItem.getPersistentDataContainer().set(MintPlugin.moneyKey, PersistentDataType.SHORT, (short) 1);
     new PickupTask(droppedItem);
     return droppedItem;
   }
